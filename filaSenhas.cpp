@@ -3,41 +3,185 @@
 #include <string>
 
 #define TAM 5
+using namespace std;
 
-struct SenhasGeradas {
-	
+struct SenhasGeradas
+{
 	int senhas[TAM];
 	int ini;
 	int fim;
 };
 
-struct Senha {
-	int senha;
-	Senha* prox;	
+struct Senha
+{
+	int numero;
+	Senha* prox;
 };
-struct SenhasAtendidas {
-	
+struct SenhasAtendidas
+{
 	Senha* ini;
 	Senha* fim;
-	
 };
 
-SenhasGeradas* initGeradas() {
+SenhasGeradas* initGeradas()
+{
 	SenhasGeradas* s = new SenhasGeradas;
 	s->ini = 0;
 	s->fim = 0;
 	return s;
 }
 
-SenhasAtendidas* initAtendidas() {
+SenhasAtendidas* initAtendidas()
+{
 	SenhasAtendidas* s = new SenhasAtendidas;
 	s->ini = NULL;
 	s->fim = NULL;
 	return s;
 }
 
+bool isEmpty(SenhasGeradas* s)
+{
+	return (s->ini == s->fim);
+}
+
+bool isEmpty(SenhasAtendidas* s)
+{
+	return (s->ini == NULL);
+}
+
+int incrementa (int ii)
+{
+	return(ii == TAM ? 0 : ++ii);
+}
+
+int count (SenhasGeradas* s)
+{
+	int qtd = 0;
+	int ii = s->ini;
+	while (ii != s->fim)
+	{
+		qtd++;
+		ii = incrementa(ii);
+	}
+	return qtd;
+}
+
+int count (SenhasAtendidas* s)
+{
+	int qtd = 0;
+	Senha* ii = s->ini;
+	while(ii != NULL)
+	{
+		qtd++;
+		ii = ii->prox;
+	}
+	return qtd;
+}
+
+bool geraSenha(SenhasGeradas* s, int ii) {
+	bool podeGerar = count(s) < TAM;
+	if (podeGerar) {
+		if(isEmpty(s)) {
+			s->senhas[s->ini] = ii;
+			s->fim = incrementa(ii);
+		}
+		else {
+			s->senhas[s->fim] = ii;
+			s->fim = incrementa(ii);
+		}
+	}
+	return podeGerar;
+}
+
+int mataSenha(SenhasGeradas* s) {
+	bool podeMatar = !isEmpty(s);
+	int ret;
+	if (podeMatar) {
+		ret = s->senhas[s->ini];
+		s->ini++;
+	}
+	else {
+		//cod de erro
+		ret = -1;
+	}
+	return ret;
+}
+
+void geraSenha(SenhasAtendidas* s, int ii) {
+	Senha* senha = new Senha;
+	senha->numero = ii; 
+	senha->prox = NULL;
+	if (isEmpty(s)) {
+		s->ini = senha;
+	}
+	else {
+		s->fim->prox = senha;
+	}
+	s->fim = senha;
+}
+
+void atender(SenhasGeradas* g, SenhasAtendidas* s) {
+	int atendido = mataSenha(g);
+	if (atendido == -1) {
+		cout << "Nenhum atendimento pendente!" << endl;
+	}
+	else {
+		geraSenha(s, atendido);
+		cout << "Senha: " << s->fim->numero << " atendida!"<<endl;;
+	}
+}
+
+void relatorioDeAtendimentos(SenhasAtendidas* s) {
+	Senha* aux = s->ini; 
+	cout << string(40, '-') << endl;
+	cout << "Senhas atendidas durante a execução: " << endl;
+	
+	while (aux != s->fim) {
+		cout << aux->numero << endl;
+		aux = aux->prox;
+	}
+	cout << string(40, '-') << endl;
+}
+
+
+
 int main(int argc, char** argv)
 {
-	
+	setlocale(LC_ALL, "");
+	int prox = 1;
+	SenhasGeradas* senhas = initGeradas();
+	SenhasAtendidas* atendidos = initAtendidas();
+	//numero qualquer para previnir que a variavel esteja localizada em um endereço cujo valor inteiro é 0
+	int seletor = 1; 
+	while(seletor != 0 || !isEmpty(senhas)) {
+		cout << "Selecione uma opção" << endl;
+		//fazer menu
+		cin >> seletor;
+		switch(seletor) {
+			case 0: {
+				if (!isEmpty(senhas)) {
+					cout << "Finalize os atendimentos antes de sair! (restam " << count(senhas) << ")" << endl;
+				}
+				break;
+			}
+			case 1: {
+				if (geraSenha(senhas, prox)) {
+					cout << "Senha gerada! Aguarde o atendimento" << endl;
+					cout << "N da senha: " << prox++ << endl;
+				}
+				break;
+			}
+			case 2: {
+				//fazer atendimento
+				break;
+			}
+			default: {
+				break;
+			}
+		}
+		
+	}
+	//fazer mensagem de finalização
+	relatorioDeAtendimentos(atendidos);
 	return 0;
 }
