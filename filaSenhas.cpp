@@ -127,14 +127,14 @@ void atender(SenhasGeradas* g, SenhasAtendidas* s) {
 
 void relatorioDeAtendimentos(SenhasAtendidas* s) {
 	Senha* aux = s->ini; 
-	cout << string(40, '-') << endl;
+	cout << string(50, '-') << endl;
 	cout << "Senhas atendidas durante a execução: " << endl;
 	
 	while (aux != NULL) {
 		cout << aux->numero << endl;
 		aux = aux->prox;
 	}
-	cout << string(40, '-') << endl;
+	cout << string(50, '-') << endl;
 }
 
 
@@ -151,15 +151,15 @@ int main(int argc, char** argv)
 	while(seletor != 0 || !isEmpty(senhas)) {
 		
 		//construção do menu
-		cout << string(40, '-') << endl
+		cout << string(50, '-') << endl
 		<< "Opções:" << endl 
-		<< string(40, '-') << endl
+		<< string(50, '-') << endl
 		<< "0 - Sair." << endl
 		<< "1 - Gerar senha." << endl
 		<< "2 - Realizar atendimento." << endl;
-		cout << string(40, '-') << endl
+		cout << string(50, '-') << endl
 		<< "Aguardando atendimento: " << count(senhas) << endl
-		<< string(40, '-') << endl;
+		<< string(50, '-') << endl;
 		
 		//inicio do atendimento
 		cout << "Selecione uma opção" << endl;
@@ -168,6 +168,10 @@ int main(int argc, char** argv)
 			case 0: {
 				if (!isEmpty(senhas)) {
 					cout << "Finalize os atendimentos antes de sair! (restam " << count(senhas) << ")" << endl << endl;
+				}
+				else {
+					cout << string(50, '-') << endl
+					<< "Fim da execução, relatório de atendimentos abaixo:" <<  endl;
 				}
 				break;
 			}
@@ -191,7 +195,6 @@ int main(int argc, char** argv)
 		}
 		
 	}
-	//fazer mensagem de finalização
 	relatorioDeAtendimentos(atendidos);
 	return 0;
 }
