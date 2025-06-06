@@ -79,16 +79,10 @@ int count (SenhasAtendidas* s)
 }
 
 bool geraSenha(SenhasGeradas* s, int ii) {
-	bool podeGerar = count(s) < TAM;
+	bool podeGerar = incrementa(s->fim) != s->ini;
 	if (podeGerar) {
-		if(isEmpty(s)) {
-			s->senhas[s->ini] = ii;
-			s->fim = incrementa(ii);
-		}
-		else {
-			s->senhas[s->fim] = ii;
-			s->fim = incrementa(ii);
-		}
+		s->senhas[s->fim] = ii;
+		s->fim = incrementa(s->fim);
 	}
 	return podeGerar;
 }
@@ -136,7 +130,7 @@ void relatorioDeAtendimentos(SenhasAtendidas* s) {
 	cout << string(40, '-') << endl;
 	cout << "Senhas atendidas durante a execução: " << endl;
 	
-	while (aux != s->fim) {
+	while (aux != NULL) {
 		cout << aux->numero << endl;
 		aux = aux->prox;
 	}
@@ -151,31 +145,47 @@ int main(int argc, char** argv)
 	int prox = 1;
 	SenhasGeradas* senhas = initGeradas();
 	SenhasAtendidas* atendidos = initAtendidas();
+	
 	//numero qualquer para previnir que a variavel esteja localizada em um endereço cujo valor inteiro é 0
 	int seletor = 1; 
 	while(seletor != 0 || !isEmpty(senhas)) {
+		
+		//construção do menu
+		cout << string(40, '-') << endl
+		<< "Opções:" << endl 
+		<< string(40, '-') << endl
+		<< "0 - Sair." << endl
+		<< "1 - Gerar senha." << endl
+		<< "2 - Realizar atendimento." << endl;
+		cout << string(40, '-') << endl
+		<< "Aguardando atendimento: " << count(senhas) << endl
+		<< string(40, '-') << endl;
+		
+		//inicio do atendimento
 		cout << "Selecione uma opção" << endl;
-		//fazer menu
 		cin >> seletor;
 		switch(seletor) {
 			case 0: {
 				if (!isEmpty(senhas)) {
-					cout << "Finalize os atendimentos antes de sair! (restam " << count(senhas) << ")" << endl;
+					cout << "Finalize os atendimentos antes de sair! (restam " << count(senhas) << ")" << endl << endl;
 				}
 				break;
 			}
 			case 1: {
 				if (geraSenha(senhas, prox)) {
 					cout << "Senha gerada! Aguarde o atendimento" << endl;
-					cout << "N da senha: " << prox++ << endl;
+					cout << "N da senha: " << prox++ << endl << endl;
+				} else {
+					cout << "Quantidade máxima de senhas atingida" << endl << endl;
 				}
 				break;
 			}
 			case 2: {
-				//fazer atendimento
+				atender(senhas, atendidos);
 				break;
 			}
 			default: {
+				cout << "Informe uma opção válida!" << endl << endl;
 				break;
 			}
 		}
