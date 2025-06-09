@@ -2,7 +2,7 @@
 #include <locale.h>
 #include <string>
 
-#define TAM 5
+#define TAM 6
 using namespace std;
 
 struct SenhasGeradas
@@ -51,7 +51,7 @@ bool isEmpty(SenhasAtendidas* s)
 
 int incrementa (int ii)
 {
-	return(ii == TAM ? 0 : ++ii);
+	return (ii+1)%TAM;
 }
 
 int count (SenhasGeradas* s)
@@ -92,7 +92,7 @@ int mataSenha(SenhasGeradas* s) {
 	int ret;
 	if (podeMatar) {
 		ret = s->senhas[s->ini];
-		s->ini++;
+		s->ini = incrementa(s->ini);
 	}
 	else {
 		//cod de erro
@@ -134,6 +134,7 @@ void relatorioDeAtendimentos(SenhasAtendidas* s) {
 		cout << aux->numero << endl;
 		aux = aux->prox;
 	}
+	cout << "Total de atendimentos: " << count(s);
 	cout << string(50, '-') << endl;
 }
 
